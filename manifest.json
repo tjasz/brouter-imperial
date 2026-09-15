@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "brouter-imperial",
+  "version": "1.0.0",
+  "description": "Displays BRouter route distances in miles and ascent values in feet.",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://brouter.de/*",
+        "*://*.brouter.de/*"
+      ],
+      "js": [
+        "converter.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
