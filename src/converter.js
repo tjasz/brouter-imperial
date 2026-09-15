@@ -58,7 +58,14 @@
       ? Number(trimmed.replace(/[.,\s]/g, ""))
       : parseNumber(trimmed);
 
-    return meters === null ? null : String(Math.round(meters * FEET_PER_METER));
+    if (meters === null) {
+      return null;
+    }
+
+    return String(Math.round(meters * FEET_PER_METER)).replace(
+      /\B(?=(\d{3})+(?!\d))/g,
+      ","
+    );
   }
 
   function kilometerTitleToMiles(value) {

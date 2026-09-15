@@ -16,10 +16,10 @@ test("converts the precise distance title to miles", function () {
 });
 
 test("converts ascent meters to rounded feet", function () {
-  assert.equal(converter.metersToFeet("405"), "1329");
+  assert.equal(converter.metersToFeet("405"), "1,329");
   assert.equal(converter.metersToFeet("9"), "30");
-  assert.equal(converter.metersToFeet("1,049"), "3442");
-  assert.equal(converter.metersToFeet("1.049"), "3442");
-  assert.equal(converter.metersToFeet("1 049"), "3442");
+  assert.equal(converter.metersToFeet("1,049"), "3,442");
+  assert.equal(converter.metersToFeet("1.049"), "3,442");
+  assert.equal(converter.metersToFeet("1 049"), "3,442");
   assert.equal(converter.metersToFeet("-"), null);
 });
