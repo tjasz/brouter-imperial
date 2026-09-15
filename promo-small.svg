@@ -62,7 +62,7 @@
     <path
       d="M36 224C94 210 98 176 150 181c55 6 57-37 100-36 42 1 52-40 90-37 35 3 40-39 64-60"
       fill="none"
-      stroke="#38aadd"
+      stroke="magenta"
       stroke-width="10"
       stroke-linecap="round"
       stroke-linejoin="round"
