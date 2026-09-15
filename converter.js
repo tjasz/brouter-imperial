@@ -52,7 +52,12 @@
   }
 
   function metersToFeet(value) {
-    const meters = parseNumber(value);
+    const trimmed = value.trim();
+    const groupedInteger = /^[+-]?\d{1,3}(?:[.,\s]\d{3})+$/.test(trimmed);
+    const meters = groupedInteger
+      ? Number(trimmed.replace(/[.,\s]/g, ""))
+      : parseNumber(trimmed);
+
     return meters === null ? null : String(Math.round(meters * FEET_PER_METER));
   }
 
