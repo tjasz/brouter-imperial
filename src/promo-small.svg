@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280" role="img" aria-labelledby="title description">
+  <title id="title">BRouter Imperial promotional tile</title>
+  <desc id="description">A blue route crosses a dark topographic background and a disc labeled miles and feet</desc>
+
+  <defs>
+    <linearGradient id="background-gradient" x1="24" y1="12" x2="416" y2="268" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#46515a"/>
+      <stop offset=".42" stop-color="#343a40"/>
+      <stop offset="1" stop-color="#202428"/>
+    </linearGradient>
+    <linearGradient id="disc-gradient" x1="218" y1="62" x2="352" y2="226" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#66717b"/>
+      <stop offset=".48" stop-color="#343a40"/>
+      <stop offset="1" stop-color="#202428"/>
+    </linearGradient>
+    <linearGradient id="elevation-gradient" x1="0" y1="200" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38aadd" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#38aadd" stop-opacity=".03"/>
+    </linearGradient>
+    <filter id="disc-shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#111417" flood-opacity=".55"/>
+    </filter>
+    <clipPath id="canvas-clip">
+      <rect width="440" height="280"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#canvas-clip)">
+    <rect width="440" height="280" fill="url(#background-gradient)"/>
+
+    <g fill="none" stroke="#8a969f" stroke-width="2" stroke-opacity=".13">
+      <path d="M-36 40C18 4 78 12 111 49s85 42 123 5 102-47 157-16 85 17 104-2"/>
+      <path d="M-28 73C23 38 67 42 99 72s79 39 119 10 95-43 148-17 90 25 122-4"/>
+      <path d="M-20 109C24 81 64 81 93 105s71 35 112 14 83-37 134-17 93 31 136 7"/>
+      <path d="M-32 149C15 122 57 124 89 145s72 32 111 17 79-29 127-14 94 29 148 9"/>
+      <path d="M-26 191C17 165 57 169 91 187s72 27 111 17 75-20 119-10 91 21 145 6"/>
+    </g>
+
+    <path
+      d="M0 244L32 232l24 5 33-23 24 10 35-37 34 26 29-20 31 13 34-42 28 24 31-38 32 31 30-19 33 16v102H0z"
+      fill="url(#elevation-gradient)"
+    />
+    <path
+      d="M0 244L32 232l24 5 33-23 24 10 35-37 34 26 29-20 31 13 34-42 28 24 31-38 32 31 30-19 33 16"
+      fill="none"
+      stroke="#38aadd"
+      stroke-opacity=".28"
+      stroke-width="2"
+    />
+
+    <circle cx="285" cy="140" r="90" fill="url(#disc-gradient)" filter="url(#disc-shadow)"/>
+    <circle cx="285" cy="140" r="87.5" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="5"/>
+
+    <path
+      d="M36 224C94 210 98 176 150 181c55 6 57-37 100-36 42 1 52-40 90-37 35 3 40-39 64-60"
+      fill="none"
+      stroke="#fff"
+      stroke-width="17"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M36 224C94 210 98 176 150 181c55 6 57-37 100-36 42 1 52-40 90-37 35 3 40-39 64-60"
+      fill="none"
+      stroke="#38aadd"
+      stroke-width="10"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+
+    <circle cx="36" cy="224" r="12" fill="#72b026" stroke="#fff" stroke-width="5"/>
+    <circle cx="404" cy="48" r="12" fill="#d63e2a" stroke="#fff" stroke-width="5"/>
+
+    <g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(183 31) scale(1.5)">
+      <path d="M31 52V40m0 4c0-2.8 1.8-4.5 4.2-4.5 2.5 0 4.3 1.8 4.3 4.5v8m0-8c0-2.8 1.8-4.5 4.2-4.5 2.5 0 4.3 1.8 4.3 4.5v8"/>
+      <path d="M56 42v10M56 36h.01"/>
+    </g>
+    <g fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(195 47) scale(1.5)">
+      <path d="M77 88V70c0-4 2.2-6 6-6m-9 9h9"/>
+      <path d="M91 67v15c0 4 2 6 6 6m-10-15h10"/>
+    </g>
+  </g>
+</svg>
