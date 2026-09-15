@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 128 128" role="img" aria-labelledby="title description">
   <title id="title">BRouter Imperial</title>
-  <desc id="description">A blue diagonal route across a gray disc with miles and feet labels</desc>
+  <desc id="description">A magenta diagonal route across a gray disc with miles and feet labels</desc>
 
   <defs>
     <linearGradient id="disc-gradient" x1="28" y1="22" x2="101" y2="108" gradientUnits="userSpaceOnUse">
