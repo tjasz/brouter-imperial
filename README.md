@@ -4,6 +4,7 @@ A Chromium extension that changes the route statistics on
 [brouter.de/brouter-web](https://brouter.de/brouter-web) from metric to imperial units:
 
 - Route distance: kilometers to miles
+- Route distance markers: every 5 miles instead of every 5 kilometers
 - Ascend and plain ascend: meters to feet, with comma-separated thousands
 
 The extension watches BRouter's route statistics for DOM changes and also

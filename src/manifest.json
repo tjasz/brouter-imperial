@@ -10,6 +10,17 @@
         "*://*.brouter.de/*"
       ],
       "js": [
+        "imperial-markers.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "*://brouter.de/*",
+        "*://*.brouter.de/*"
+      ],
+      "js": [
         "converter.js",
         "content.js"
       ],
