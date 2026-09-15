@@ -14,7 +14,7 @@ checks them after clicks, pointer interactions, and touchscreen taps.
 1. Open `chrome://extensions` in Chromium, Chrome, Brave, or Edge.
 2. Enable **Developer mode**.
 3. Choose **Load unpacked**.
-4. Select this repository's folder.
+4. Select this repository's `src` folder.
 
 Reload any already-open brouter.de tabs after installing the extension.
 
