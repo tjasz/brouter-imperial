@@ -6,6 +6,7 @@ A Chromium extension that changes the route statistics on
 - Route distance: kilometers to miles
 - Route distance markers: every 5 miles instead of every 5 kilometers
 - Ascend and plain ascend: meters to feet, with comma-separated thousands
+- Elevation profile axes and hover details: miles and feet
 
 The extension watches BRouter's route statistics for DOM changes and also
 checks them after clicks, pointer interactions, and touchscreen taps.
@@ -24,5 +25,5 @@ Reload any already-open brouter.de tabs after installing the extension.
 With Node.js 18 or newer:
 
 ```text
-node --test src\converter.test.js
+node --test src\*.test.js
 ```

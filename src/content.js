@@ -91,9 +91,47 @@
     states.set(field.id, state);
   }
 
+  function convertElementText(element, convert) {
+    const convertedText = convert(element.textContent);
+
+    if (convertedText !== null && convertedText !== element.textContent) {
+      element.textContent = convertedText;
+    }
+  }
+
+  function convertProfile() {
+    document
+      .querySelectorAll("#elevation-chart .x.axis .tick text")
+      .forEach(function (element) {
+        convertElementText(element, converter.kilometerTextToMiles);
+      });
+
+    document
+      .querySelectorAll(
+        "#elevation-chart .y.axis .tick text, " +
+          "#elevation-chart .horizontalLineText"
+      )
+      .forEach(function (element) {
+        convertElementText(element, converter.meterTextToFeet);
+      });
+
+    [
+      ["heightgraph.distance", converter.kilometerTextToMiles],
+      ["heightgraph.height", converter.meterTextToFeet],
+      ["heightgraph.blockdistance", converter.kilometerTextToMiles]
+    ].forEach(function ([id, convert]) {
+      const value = document.getElementById(id)?.querySelector("tspan");
+
+      if (value) {
+        convertElementText(value, convert);
+      }
+    });
+  }
+
   function convertStats() {
     conversionScheduled = false;
     fields.forEach(convertField);
+    convertProfile();
   }
 
   function scheduleConversion() {

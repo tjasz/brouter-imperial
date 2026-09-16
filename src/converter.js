@@ -79,9 +79,37 @@
     return miles === null ? null : `${miles} mi`;
   }
 
+  function kilometerTextToMiles(value) {
+    const match = value.match(
+      /^(\s*)([+-]?\d+(?:[.,]\d+)?)\s*km(\s*)$/i
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const miles = kilometersToMiles(match[2]);
+    return miles === null ? null : `${match[1]}${miles} mi${match[3]}`;
+  }
+
+  function meterTextToFeet(value) {
+    const match = value.match(
+      /^(\s*)([+-]?\d+(?:[.,\s]\d{3})*(?:[.,]\d+)?)\s*m(\s*)$/i
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const feet = metersToFeet(match[2]);
+    return feet === null ? null : `${match[1]}${feet} ft${match[3]}`;
+  }
+
   return {
     kilometersToMiles,
     kilometerTitleToMiles,
+    kilometerTextToMiles,
+    meterTextToFeet,
     metersToFeet
   };
 });
