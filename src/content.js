@@ -4,7 +4,9 @@
   const converter = globalThis.BRouterImperial;
   const states = new Map();
   const elementStates = new WeakMap();
+  const inputStates = new WeakMap();
   let conversionScheduled = false;
+  let exportPolling = false;
 
   const fields = [
     {
@@ -144,6 +146,7 @@
         "dist. (mi)",
         "distance"
       ]);
+      const costIndex = dataColumnIndex(headings, ["$/km", "$/mi"]);
 
       table.querySelectorAll("tbody tr").forEach(function (row) {
         const cells = row.querySelectorAll("td");
@@ -161,6 +164,13 @@
             converter.metersToMiles
           );
         }
+
+        if (costIndex >= 0 && cells[costIndex]) {
+          convertBareElementText(
+            cells[costIndex],
+            converter.costPerKilometerToCostPerMile
+          );
+        }
       });
 
       if (elevationIndex >= 0) {
@@ -169,6 +179,10 @@
 
       if (distanceIndex >= 0) {
         updateDataHeading(headings[distanceIndex], "dist. (mi)");
+      }
+
+      if (costIndex >= 0) {
+        updateDataHeading(headings[costIndex], "$/mi");
       }
     });
   }
@@ -179,6 +193,175 @@
       .forEach(function (element) {
         convertElementText(element, converter.kilometerTextToMiles);
       });
+
+    document
+      .querySelectorAll("#tab_analysis .track-analysis-title")
+      .forEach(function (element) {
+        convertElementText(
+          element,
+          converter.kilometersPerHourTextToMilesPerHour
+        );
+      });
+  }
+
+  function convertEnergy() {
+    const meanEnergy = document.getElementById("meanenergy");
+
+    if (meanEnergy) {
+      convertBareElementText(
+        meanEnergy,
+        converter.per100KilometersToPer100Miles
+      );
+    }
+
+    document
+      .querySelectorAll('[data-i18n="footer.energy-per-100km"]')
+      .forEach(function (label) {
+        if (label.textContent !== "Energy per 100 mi") {
+          label.textContent = "Energy per 100 mi";
+        }
+      });
+  }
+
+  function convertNogoInput(input) {
+    const previous = inputStates.get(input);
+
+    if (!previous) {
+      const metricValue = input.value;
+      const renderedValue = converter.metersToFeet(metricValue);
+
+      if (renderedValue !== null) {
+        input.value = renderedValue;
+        inputStates.set(input, {
+          metricValue,
+          renderedValue
+        });
+      }
+
+      return;
+    }
+
+    if (input.value !== previous.renderedValue) {
+      inputStates.set(input, {
+        metricValue: null,
+        renderedValue: input.value
+      });
+    }
+  }
+
+  function convertNogoInputs() {
+    [
+      ["nogoRadius", "No-go radius for points (in feet):"],
+      ["nogoBuffer", "Buffer no-go areas (in feet):"]
+    ].forEach(function ([id, labelText]) {
+      const input = document.getElementById(id);
+
+      if (!input) {
+        return;
+      }
+
+      convertNogoInput(input);
+      const label = document.querySelector(`label[for="${id}"]`);
+
+      if (label && label.textContent.trim() !== labelText) {
+        label.textContent = labelText;
+      }
+    });
+  }
+
+  function provideMetricNogoInputs() {
+    ["nogoRadius", "nogoBuffer"].forEach(function (id) {
+      const input = document.getElementById(id);
+      const state = input && inputStates.get(input);
+
+      if (!input || !state) {
+        return;
+      }
+
+      const metricValue =
+        state.metricValue === null || input.value !== state.renderedValue
+          ? converter.feetToMeters(input.value)
+          : state.metricValue;
+
+      if (metricValue === null) {
+        return;
+      }
+
+      input.value = metricValue;
+      queueMicrotask(function () {
+        const renderedValue = converter.metersToFeet(metricValue);
+
+        if (renderedValue !== null) {
+          input.value = renderedValue;
+          inputStates.set(input, { metricValue, renderedValue });
+        }
+      });
+    });
+  }
+
+  function convertCirclePopup() {
+    function convertTextNodes(node) {
+      Array.from(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          const converted = converter.embeddedKilometersToMiles(
+            child.textContent
+          );
+
+          if (converted !== null) {
+            child.textContent = converted;
+          }
+        } else {
+          convertTextNodes(child);
+        }
+      });
+    }
+
+    document
+      .querySelectorAll(".leaflet-popup-content")
+      .forEach(function (popup) {
+        if (!popup.querySelector("#remove-ringgo-marker")) {
+          return;
+        }
+
+        popup.querySelectorAll("p").forEach(function (paragraph) {
+          convertTextNodes(paragraph);
+        });
+      });
+  }
+
+  function convertExportName() {
+    const trackName = document.getElementById("trackname");
+
+    if (!trackName) {
+      return;
+    }
+
+    const converted = converter.kilometerUnitToMiles(trackName.value);
+
+    if (converted !== null) {
+      trackName.value = converted;
+    }
+  }
+
+  function pollExportName() {
+    const modal = document.getElementById("export");
+
+    if (!modal?.classList.contains("show")) {
+      exportPolling = false;
+      return;
+    }
+
+    convertExportName();
+    setTimeout(pollExportName, 100);
+  }
+
+  function startExportPolling() {
+    const modal = document.getElementById("export");
+
+    if (!exportPolling && modal?.classList.contains("show")) {
+      exportPolling = true;
+      pollExportName();
+    }
   }
 
   function convertProfile() {
@@ -216,6 +399,11 @@
     convertData();
     convertAnalysis();
     convertProfile();
+    convertEnergy();
+    convertNogoInputs();
+    convertCirclePopup();
+    convertExportName();
+    startExportPolling();
   }
 
   function scheduleConversion() {
@@ -237,10 +425,20 @@
   });
 
   ["click", "pointerup", "touchend"].forEach(function (eventName) {
-    document.addEventListener(eventName, scheduleConversion, {
+    document.addEventListener(eventName, function (event) {
+      if (eventName === "click" && event.target.closest?.("#submitNogos")) {
+        provideMetricNogoInputs();
+      }
+
+      scheduleConversion();
+    }, {
       capture: true,
       passive: true
     });
+  });
+
+  ["input", "change"].forEach(function (eventName) {
+    document.addEventListener(eventName, scheduleConversion, true);
   });
 
   scheduleConversion();

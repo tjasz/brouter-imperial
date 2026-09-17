@@ -45,6 +45,24 @@ test("waits to install until Leaflet distance markers are available", function (
   assert.equal(imperialMarkers.install({}), false);
 });
 
+test("converts circle no-go GPX metadata names to miles", function () {
+  let receivedOptions;
+  const root = {
+    togpx(data, options) {
+      receivedOptions = options;
+      return "gpx";
+    }
+  };
+
+  assert.equal(imperialMarkers.installGpx(root), true);
+  assert.equal(
+    root.togpx({}, { metadata: { name: "Boundary + 10 km", link: "url" } }),
+    "gpx"
+  );
+  assert.equal(receivedOptions.metadata.name, "Boundary + 6 mi");
+  assert.equal(receivedOptions.metadata.link, "url");
+});
+
 test("retries installation when Leaflet loads later", function () {
   let retry;
   let clearedInterval;
@@ -63,6 +81,7 @@ test("retries installation when Leaflet loads later", function () {
   root.L = {
     DistanceMarkers: function () {}
   };
+  root.togpx = function () {};
   root.L.DistanceMarkers.prototype.initialize = function () {};
   retry();
 
@@ -89,6 +108,7 @@ test("runs directly in a browser main-world context", function () {
   context.L = {
     DistanceMarkers: function () {}
   };
+  context.togpx = function () {};
   context.L.DistanceMarkers.prototype.initialize = function (
     line,
     map,

@@ -8,7 +8,12 @@ A Firefox and Chromium extension that changes the route statistics on
 - Ascend and plain ascend: meters to feet, with comma-separated thousands
 - Elevation profile axes and hover details: miles and feet
 - Data view segment distances and elevations: miles and feet
-- Analysis view distances: kilometers to miles
+- Data view cost rates: cost per kilometer to cost per mile
+- Analysis view distances and maximum speeds: miles and miles per hour
+- Energy consumption rate: per 100 miles instead of per 100 kilometers
+- No-go import radius and buffer inputs: feet, converted back to meters for BRouter
+- Circle no-go radius popups and GPX metadata: kilometers to miles
+- Exported route names: kilometers to miles
 
 The extension watches BRouter's route statistics for DOM changes and also
 checks them after clicks, pointer interactions, and touchscreen taps.

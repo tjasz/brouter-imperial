@@ -44,17 +44,20 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   const upperDataHeadings = [
     textElement("Longitude"),
     textElement("elev."),
-    textElement("dist.")
+    textElement("dist."),
+    textElement("$/km")
   ];
   const lowerDataHeadings = [
     sizingHeading("Longitude"),
     sizingHeading("elev."),
-    sizingHeading("dist.")
+    sizingHeading("dist."),
+    sizingHeading("$/km")
   ];
   const dataCells = [
     textElement("8468340"),
     textElement("101"),
-    textElement("89")
+    textElement("89"),
+    textElement("100")
   ];
   function dataTable(headings, rows) {
     return {
@@ -80,16 +83,28 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
     }
   ]);
   const analysisDistance = textElement("10.00 km");
+  const analysisSpeed = textElement("50 km/h");
+  const meanEnergy = textElement("2.50");
+  const energyLabel = textElement("Energy per 100 km");
+  const trackName = { value: "Berlin - Potsdam (6.2km)" };
   const hoverValues = {
     "heightgraph.distance": hoverDistance,
     "heightgraph.height": hoverElevation,
     "heightgraph.blockdistance": hoverSegment
+  };
+  const directElements = {
+    meanenergy: meanEnergy,
+    trackname: trackName
   };
   let mutationCallback;
   const document = {
     documentElement: {},
     addEventListener() {},
     getElementById(id) {
+      if (directElements[id]) {
+        return directElements[id];
+      }
+
       const value = hoverValues[id];
 
       return value
@@ -100,6 +115,9 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
           }
         : null;
     },
+    querySelector() {
+      return null;
+    },
     querySelectorAll(selector) {
       if (selector === "#tab_data table") {
         return [upperDataTable, lowerDataTable];
@@ -107,6 +125,14 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
 
       if (selector === "#tab_analysis .track-analysis-distance") {
         return [analysisDistance];
+      }
+
+      if (selector === "#tab_analysis .track-analysis-title") {
+        return [analysisSpeed];
+      }
+
+      if (selector === '[data-i18n="footer.energy-per-100km"]') {
+        return [energyLabel];
       }
 
       if (selector === "#elevation-chart .x.axis .tick text") {
@@ -142,33 +168,127 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   assert.equal(upperDataHeadings[2].textContent, "dist. (mi)");
   assert.equal(lowerDataHeadings[1].textContent, "elev. (ft)");
   assert.equal(lowerDataHeadings[2].textContent, "dist. (mi)");
+  assert.equal(upperDataHeadings[3].textContent, "$/mi");
+  assert.equal(lowerDataHeadings[3].textContent, "$/mi");
   assert.ok(lowerDataHeadings[1].querySelector(".dataTables_sizing"));
   assert.ok(lowerDataHeadings[2].querySelector(".dataTables_sizing"));
   assert.equal(dataCells[1].textContent, "331");
   assert.equal(dataCells[2].textContent, "0.06");
+  assert.equal(dataCells[3].textContent, "160.93");
   assert.equal(analysisDistance.textContent, "6.21 mi");
+  assert.equal(analysisSpeed.textContent, "31 mph");
   assert.equal(xAxis.textContent, "6.21 mi");
   assert.equal(yAxis.textContent, "1,312 ft");
   assert.equal(horizontalLine.textContent, "984 ft");
   assert.equal(hoverDistance.textContent, " 3.9 mi");
   assert.equal(hoverElevation.textContent, " 1,329 ft");
   assert.equal(hoverSegment.textContent, " 0.6 mi");
+  assert.equal(meanEnergy.textContent, "4.02");
+  assert.equal(energyLabel.textContent, "Energy per 100 mi");
+  assert.equal(trackName.value, "Berlin - Potsdam (6.2 mi)");
 
   xAxis.textContent = "5.00 km";
   hoverElevation.textContent = " 500 m";
   dataCells[1].textContent = "200";
   dataCells[2].textContent = "1000";
+  dataCells[3].textContent = "50";
   analysisDistance.textContent = "5.00 km";
+  analysisSpeed.textContent = "80 km/h";
+  meanEnergy.textContent = "3.00";
   mutationCallback();
 
   assert.equal(dataCells[1].textContent, "656");
   assert.equal(dataCells[2].textContent, "0.62");
+  assert.equal(dataCells[3].textContent, "80.47");
   assert.equal(analysisDistance.textContent, "3.11 mi");
+  assert.equal(analysisSpeed.textContent, "50 mph");
   assert.equal(xAxis.textContent, "3.11 mi");
   assert.equal(hoverElevation.textContent, " 1,640 ft");
+  assert.equal(meanEnergy.textContent, "4.83");
 
   mutationCallback();
 
   assert.equal(dataCells[1].textContent, "656");
   assert.equal(dataCells[2].textContent, "0.62");
+  assert.equal(dataCells[3].textContent, "80.47");
+});
+
+test("displays no-go inputs and circle popups in imperial units", function () {
+  const queued = [];
+  const listeners = {};
+  const radius = { value: "20", defaultValue: "20" };
+  const buffer = { value: "0", defaultValue: "0" };
+  const radiusLabel = textElement("No-go radius for points (in meters):");
+  const bufferLabel = textElement("Buffer no-go areas (in meters):");
+  const radiusText = { nodeType: 3, textContent: "Boundary + 10 km" };
+  const lineBreak = { nodeType: 1, childNodes: [] };
+  const paragraph = { childNodes: [radiusText, lineBreak] };
+  const popup = {
+    querySelector(selector) {
+      return selector === "#remove-ringgo-marker" ? {} : null;
+    },
+    querySelectorAll(selector) {
+      return selector === "p" ? [paragraph] : [];
+    }
+  };
+  const document = {
+    documentElement: {},
+    addEventListener(name, callback) {
+      listeners[name] ||= [];
+      listeners[name].push(callback);
+    },
+    getElementById(id) {
+      return { nogoRadius: radius, nogoBuffer: buffer }[id] || null;
+    },
+    querySelector(selector) {
+      return {
+        'label[for="nogoRadius"]': radiusLabel,
+        'label[for="nogoBuffer"]': bufferLabel
+      }[selector] || null;
+    },
+    querySelectorAll(selector) {
+      return selector === ".leaflet-popup-content" ? [popup] : [];
+    }
+  };
+  const context = {
+    BRouterImperial: converter,
+    document,
+    MutationObserver: class {
+      observe() {}
+    },
+    queueMicrotask(callback) {
+      queued.push(callback);
+    },
+    setTimeout() {}
+  };
+  const source = fs.readFileSync(path.join(__dirname, "content.js"), "utf8");
+
+  vm.runInNewContext(source, context);
+  queued.shift()();
+
+  assert.equal(radius.value, "66");
+  assert.equal(buffer.value, "0");
+  assert.equal(radiusLabel.textContent, "No-go radius for points (in feet):");
+  assert.equal(bufferLabel.textContent, "Buffer no-go areas (in feet):");
+  assert.equal(radiusText.textContent, "Boundary + 6 mi");
+  assert.equal(paragraph.childNodes[1], lineBreak);
+
+  radius.value = "100";
+  listeners.input[0]();
+  queued.shift()();
+  listeners.click[0]({
+    target: {
+      closest(selector) {
+        return selector === "#submitNogos";
+      }
+    }
+  });
+
+  assert.equal(radius.value, "30.48");
+
+  while (queued.length > 0) {
+    queued.shift()();
+  }
+
+  assert.equal(radius.value, "100");
 });

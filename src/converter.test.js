@@ -44,3 +44,42 @@ test("converts profile elevation labels to feet", function () {
   assert.equal(converter.meterTextToFeet("-10 m"), "-33 ft");
   assert.equal(converter.meterTextToFeet("405 ft"), null);
 });
+
+test("converts no-go form values between meters and feet", function () {
+  assert.equal(converter.metersToFeet("20"), "66");
+  assert.equal(converter.feetToMeters("66"), "20.1168");
+  assert.equal(converter.feetToMeters("-"), null);
+});
+
+test("converts energy and cost rates to imperial distance rates", function () {
+  assert.equal(converter.per100KilometersToPer100Miles("2.50"), "4.02");
+  assert.equal(converter.per100KilometersToPer100Miles("2,50"), "4,02");
+  assert.equal(converter.costPerKilometerToCostPerMile("100"), "160.93");
+});
+
+test("converts analysis speeds to miles per hour", function () {
+  assert.equal(
+    converter.kilometersPerHourTextToMilesPerHour("50 km/h"),
+    "31 mph"
+  );
+  assert.equal(
+    converter.kilometersPerHourTextToMilesPerHour("12.5 km/h"),
+    "7.8 mph"
+  );
+  assert.equal(converter.kilometersPerHourTextToMilesPerHour("31 mph"), null);
+});
+
+test("converts embedded kilometer distances and export-name units", function () {
+  assert.equal(
+    converter.embeddedKilometersToMiles("Boundary + 10 km"),
+    "Boundary + 6 mi"
+  );
+  assert.equal(
+    converter.kilometerUnitToMiles("Berlin - Potsdam (16.2km)"),
+    "Berlin - Potsdam (16.2 mi)"
+  );
+  assert.equal(
+    converter.kilometerUnitToMiles("起點 ->終點(6.2公里)"),
+    "起點 ->終點(6.2 mi)"
+  );
+});
