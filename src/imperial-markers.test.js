@@ -63,6 +63,41 @@ test("converts circle no-go GPX metadata names to miles", function () {
   assert.equal(receivedOptions.metadata.link, "url");
 });
 
+test("provides no-go radius and buffer values to BRouter in meters", function () {
+  const radius = { value: "5280", dataset: {} };
+  const buffer = {
+    value: "66",
+    dataset: {
+      brouterImperialMeters: "20",
+      brouterImperialRenderedFeet: "66"
+    }
+  };
+  let receivedRadius;
+  let receivedBuffer;
+  const root = {
+    document: {
+      getElementById(id) {
+        return { nogoRadius: radius, nogoBuffer: buffer }[id];
+      }
+    },
+    BR: {
+      NogoAreas: function () {}
+    }
+  };
+  root.BR.NogoAreas.prototype.uploadNogos = function () {
+    receivedRadius = radius.value;
+    receivedBuffer = buffer.value;
+    return "uploaded";
+  };
+
+  assert.equal(imperialMarkers.installNogoInputs(root), true);
+  assert.equal(root.BR.NogoAreas.prototype.uploadNogos(), "uploaded");
+  assert.equal(receivedRadius, "1609.344");
+  assert.equal(receivedBuffer, "20");
+  assert.equal(radius.value, "5280");
+  assert.equal(buffer.value, "66");
+});
+
 test("retries installation when Leaflet loads later", function () {
   let retry;
   let clearedInterval;
@@ -82,6 +117,9 @@ test("retries installation when Leaflet loads later", function () {
     DistanceMarkers: function () {}
   };
   root.togpx = function () {};
+  root.document = { getElementById() {} };
+  root.BR = { NogoAreas: function () {} };
+  root.BR.NogoAreas.prototype.uploadNogos = function () {};
   root.L.DistanceMarkers.prototype.initialize = function () {};
   retry();
 
@@ -109,6 +147,9 @@ test("runs directly in a browser main-world context", function () {
     DistanceMarkers: function () {}
   };
   context.togpx = function () {};
+  context.document = { getElementById() {} };
+  context.BR = { NogoAreas: function () {} };
+  context.BR.NogoAreas.prototype.uploadNogos = function () {};
   context.L.DistanceMarkers.prototype.initialize = function (
     line,
     map,

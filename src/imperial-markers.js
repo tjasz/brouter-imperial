@@ -5,6 +5,7 @@
   const MARKER_INTERVAL_MILES = 5;
   const PATCHED = Symbol("brouterImperialDistanceMarkers");
   const GPX_PATCHED = Symbol("brouterImperialGpx");
+  const NOGO_PATCHED = Symbol("brouterImperialNogoInputs");
 
   function convertEmbeddedKilometers(value) {
     return value.replace(
@@ -76,13 +77,61 @@
     return true;
   }
 
+  function installNogoInputs(root) {
+    const prototype = root.BR?.NogoAreas?.prototype;
+
+    if (!prototype?.uploadNogos) {
+      return false;
+    }
+
+    if (prototype[NOGO_PATCHED]) {
+      return true;
+    }
+
+    const uploadNogos = prototype.uploadNogos;
+
+    prototype.uploadNogos = function () {
+      const inputs = ["nogoRadius", "nogoBuffer"]
+        .map(function (id) {
+          return root.document.getElementById(id);
+        })
+        .filter(Boolean);
+      const displayedValues = inputs.map(function (input) {
+        return input.value;
+      });
+
+      inputs.forEach(function (input) {
+        const storedMeters = input.dataset.brouterImperialMeters;
+        const renderedFeet = input.dataset.brouterImperialRenderedFeet;
+        const feet = Number(input.value);
+
+        if (storedMeters && renderedFeet === input.value) {
+          input.value = storedMeters;
+        } else if (Number.isFinite(feet)) {
+          input.value = String(Number((feet / 3.28083989501312).toFixed(6)));
+        }
+      });
+
+      try {
+        return uploadNogos.apply(this, arguments);
+      } finally {
+        inputs.forEach(function (input, index) {
+          input.value = displayedValues[index];
+        });
+      }
+    };
+    prototype[NOGO_PATCHED] = true;
+
+    return true;
+  }
+
   function installWhenReady(root) {
-    if (install(root) && installGpx(root)) {
+    if (install(root) && installGpx(root) && installNogoInputs(root)) {
       return;
     }
 
     const interval = root.setInterval(function () {
-      if (install(root) && installGpx(root)) {
+      if (install(root) && installGpx(root) && installNogoInputs(root)) {
         root.clearInterval(interval);
       }
     }, 50);
@@ -96,6 +145,7 @@
     module.exports = {
       install,
       installGpx,
+      installNogoInputs,
       installWhenReady,
       METERS_PER_MILE,
       MARKER_INTERVAL_MILES

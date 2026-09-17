@@ -236,6 +236,8 @@
           metricValue,
           renderedValue
         });
+        input.dataset.brouterImperialMeters = metricValue;
+        input.dataset.brouterImperialRenderedFeet = renderedValue;
       }
 
       return;
@@ -246,6 +248,8 @@
         metricValue: null,
         renderedValue: input.value
       });
+      input.dataset.brouterImperialMeters = "";
+      input.dataset.brouterImperialRenderedFeet = input.value;
     }
   }
 
@@ -266,36 +270,6 @@
       if (label && label.textContent.trim() !== labelText) {
         label.textContent = labelText;
       }
-    });
-  }
-
-  function provideMetricNogoInputs() {
-    ["nogoRadius", "nogoBuffer"].forEach(function (id) {
-      const input = document.getElementById(id);
-      const state = input && inputStates.get(input);
-
-      if (!input || !state) {
-        return;
-      }
-
-      const metricValue =
-        state.metricValue === null || input.value !== state.renderedValue
-          ? converter.feetToMeters(input.value)
-          : state.metricValue;
-
-      if (metricValue === null) {
-        return;
-      }
-
-      input.value = metricValue;
-      queueMicrotask(function () {
-        const renderedValue = converter.metersToInputFeet(metricValue);
-
-        if (renderedValue !== null) {
-          input.value = renderedValue;
-          inputStates.set(input, { metricValue, renderedValue });
-        }
-      });
     });
   }
 
@@ -425,11 +399,7 @@
   });
 
   ["click", "pointerup", "touchend"].forEach(function (eventName) {
-    document.addEventListener(eventName, function (event) {
-      if (eventName === "click" && event.target.closest?.("#submitNogos")) {
-        provideMetricNogoInputs();
-      }
-
+    document.addEventListener(eventName, function () {
       scheduleConversion();
     }, {
       capture: true,

@@ -216,8 +216,8 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
 test("displays no-go inputs and circle popups in imperial units", function () {
   const queued = [];
   const listeners = {};
-  const radius = { value: "20", defaultValue: "20" };
-  const buffer = { value: "0", defaultValue: "0" };
+  const radius = { value: "20", defaultValue: "20", dataset: {} };
+  const buffer = { value: "0", defaultValue: "0", dataset: {} };
   const radiusLabel = textElement("No-go radius for points (in meters):");
   const bufferLabel = textElement("Buffer no-go areas (in meters):");
   const radiusText = { nodeType: 3, textContent: "Boundary + 10 km" };
@@ -273,24 +273,6 @@ test("displays no-go inputs and circle popups in imperial units", function () {
   assert.equal(radiusText.textContent, "Boundary + 6 mi");
   assert.equal(paragraph.childNodes[1], lineBreak);
 
-  radius.value = "100";
-  listeners.input[0]();
-  queued.shift()();
-  listeners.click[0]({
-    target: {
-      closest(selector) {
-        return selector === "#submitNogos";
-      }
-    }
-  });
-
-  assert.equal(radius.value, "30.48");
-
-  while (queued.length > 0) {
-    queued.shift()();
-  }
-
-  assert.equal(radius.value, "100");
 });
 
 test("converts an asynchronously generated export name after the modal opens", function () {
