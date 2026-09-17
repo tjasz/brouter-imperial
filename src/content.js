@@ -122,6 +122,15 @@
     });
   }
 
+  function updateDataHeading(heading, text) {
+    const sizing = heading.querySelector(".dataTables_sizing");
+    const content = sizing || heading;
+
+    if (content.textContent !== text) {
+      content.textContent = text;
+    }
+  }
+
   function convertData() {
     document.querySelectorAll("#tab_data table").forEach(function (table) {
       const headings = Array.from(table.querySelectorAll("thead th"));
@@ -154,18 +163,12 @@
         }
       });
 
-      if (
-        elevationIndex >= 0 &&
-        headings[elevationIndex].textContent !== "elev. (ft)"
-      ) {
-        headings[elevationIndex].textContent = "elev. (ft)";
+      if (elevationIndex >= 0) {
+        updateDataHeading(headings[elevationIndex], "elev. (ft)");
       }
 
-      if (
-        distanceIndex >= 0 &&
-        headings[distanceIndex].textContent !== "dist. (mi)"
-      ) {
-        headings[distanceIndex].textContent = "dist. (mi)";
+      if (distanceIndex >= 0) {
+        updateDataHeading(headings[distanceIndex], "dist. (mi)");
       }
     });
   }

@@ -16,6 +16,24 @@ function textElement(text) {
   };
 }
 
+function sizingHeading(text) {
+  let sizing = textElement(text);
+  let plainText = "";
+
+  return {
+    get textContent() {
+      return sizing ? sizing.textContent : plainText;
+    },
+    set textContent(value) {
+      plainText = value;
+      sizing = null;
+    },
+    querySelector(selector) {
+      return selector === ".dataTables_sizing" ? sizing : null;
+    }
+  };
+}
+
 test("converts Data, Analysis, and elevation profile values after redraws", function () {
   const xAxis = textElement("10.00 km");
   const yAxis = textElement("400 m");
@@ -23,35 +41,44 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   const hoverDistance = textElement(" 6.3 km");
   const hoverElevation = textElement(" 405 m");
   const hoverSegment = textElement(" 1.0 km");
-  const dataHeadings = [
+  const upperDataHeadings = [
     textElement("Longitude"),
     textElement("elev."),
     textElement("dist.")
+  ];
+  const lowerDataHeadings = [
+    sizingHeading("Longitude"),
+    sizingHeading("elev."),
+    sizingHeading("dist.")
   ];
   const dataCells = [
     textElement("8468340"),
     textElement("101"),
     textElement("89")
   ];
-  const dataTable = {
-    querySelectorAll(selector) {
-      if (selector === "thead th") {
-        return dataHeadings;
-      }
+  function dataTable(headings, rows) {
+    return {
+      querySelectorAll(selector) {
+        if (selector === "thead th") {
+          return headings;
+        }
 
-      if (selector === "tbody tr") {
-        return [
-          {
-            querySelectorAll() {
-              return dataCells;
-            }
-          }
-        ];
-      }
+        if (selector === "tbody tr") {
+          return rows;
+        }
 
-      return [];
+        return [];
+      }
+    };
+  }
+  const upperDataTable = dataTable(upperDataHeadings, []);
+  const lowerDataTable = dataTable(lowerDataHeadings, [
+    {
+      querySelectorAll() {
+        return dataCells;
+      }
     }
-  };
+  ]);
   const analysisDistance = textElement("10.00 km");
   const hoverValues = {
     "heightgraph.distance": hoverDistance,
@@ -75,7 +102,7 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
     },
     querySelectorAll(selector) {
       if (selector === "#tab_data table") {
-        return [dataTable];
+        return [upperDataTable, lowerDataTable];
       }
 
       if (selector === "#tab_analysis .track-analysis-distance") {
@@ -111,8 +138,12 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
 
   vm.runInNewContext(source, context);
 
-  assert.equal(dataHeadings[1].textContent, "elev. (ft)");
-  assert.equal(dataHeadings[2].textContent, "dist. (mi)");
+  assert.equal(upperDataHeadings[1].textContent, "elev. (ft)");
+  assert.equal(upperDataHeadings[2].textContent, "dist. (mi)");
+  assert.equal(lowerDataHeadings[1].textContent, "elev. (ft)");
+  assert.equal(lowerDataHeadings[2].textContent, "dist. (mi)");
+  assert.ok(lowerDataHeadings[1].querySelector(".dataTables_sizing"));
+  assert.ok(lowerDataHeadings[2].querySelector(".dataTables_sizing"));
   assert.equal(dataCells[1].textContent, "331");
   assert.equal(dataCells[2].textContent, "0.06");
   assert.equal(analysisDistance.textContent, "6.21 mi");
