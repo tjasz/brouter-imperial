@@ -185,7 +185,7 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   assert.equal(hoverSegment.textContent, " 0.6 mi");
   assert.equal(meanEnergy.textContent, "4.02");
   assert.equal(energyLabel.textContent, "Energy per 100 mi");
-  assert.equal(trackName.value, "Berlin - Potsdam (6.2 mi)");
+  assert.equal(trackName.value, "Berlin - Potsdam (6.2mi)");
 
   xAxis.textContent = "5.00 km";
   hoverElevation.textContent = " 500 m";
@@ -291,4 +291,64 @@ test("displays no-go inputs and circle popups in imperial units", function () {
   }
 
   assert.equal(radius.value, "100");
+});
+
+test("converts an asynchronously generated export name after the modal opens", function () {
+  let modalShown = false;
+  let mutationCallback;
+  let pollingCallback;
+  const trackName = { value: "" };
+  const document = {
+    documentElement: {},
+    addEventListener() {},
+    getElementById(id) {
+      if (id === "trackname") {
+        return trackName;
+      }
+
+      if (id === "export") {
+        return {
+          classList: {
+            contains(className) {
+              return className === "show" && modalShown;
+            }
+          }
+        };
+      }
+
+      return null;
+    },
+    querySelector() {
+      return null;
+    },
+    querySelectorAll() {
+      return [];
+    }
+  };
+  const context = {
+    BRouterImperial: converter,
+    document,
+    MutationObserver: class {
+      constructor(callback) {
+        mutationCallback = callback;
+      }
+
+      observe() {}
+    },
+    queueMicrotask(callback) {
+      callback();
+    },
+    setTimeout(callback) {
+      pollingCallback = callback;
+    }
+  };
+  const source = fs.readFileSync(path.join(__dirname, "content.js"), "utf8");
+
+  vm.runInNewContext(source, context);
+  modalShown = true;
+  mutationCallback();
+  trackName.value = "Seattle (6.4km)";
+  pollingCallback();
+
+  assert.equal(trackName.value, "Seattle (6.4mi)");
 });

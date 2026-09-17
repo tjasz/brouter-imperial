@@ -418,7 +418,7 @@
   const observer = new MutationObserver(scheduleConversion);
   observer.observe(document.documentElement, {
     attributes: true,
-    attributeFilter: ["title"],
+    attributeFilter: ["class", "title"],
     childList: true,
     characterData: true,
     subtree: true

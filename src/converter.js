@@ -198,8 +198,8 @@
 
   function kilometerUnitToMiles(value) {
     const result = value.replace(
-      /(\d+(?:[.,]\d+)?)\s*(?:km|км|公里|کیلومتر)/gi,
-      "$1 mi"
+      /(\d+(?:[.,]\d+)?)(\s*)(?:km|км|公里|کیلومتر)/gi,
+      "$1$2mi"
     );
 
     return result === value ? null : result;

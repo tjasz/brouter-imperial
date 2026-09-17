@@ -76,10 +76,10 @@ test("converts embedded kilometer distances and export-name units", function () 
   );
   assert.equal(
     converter.kilometerUnitToMiles("Berlin - Potsdam (16.2km)"),
-    "Berlin - Potsdam (16.2 mi)"
+    "Berlin - Potsdam (16.2mi)"
   );
   assert.equal(
     converter.kilometerUnitToMiles("起點 ->終點(6.2公里)"),
-    "起點 ->終點(6.2 mi)"
+    "起點 ->終點(6.2mi)"
   );
 });
