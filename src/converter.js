@@ -83,6 +83,16 @@
     );
   }
 
+  function metersToInputFeet(value) {
+    const meters = parseNumber(value);
+
+    if (meters === null) {
+      return null;
+    }
+
+    return String(Math.round(meters * FEET_PER_METER));
+  }
+
   function feetToMeters(value) {
     const feet = parseNumber(value);
 
@@ -217,6 +227,7 @@
     meterTextToFeet,
     metersToMiles,
     metersToFeet,
+    metersToInputFeet,
     per100KilometersToPer100Miles
   };
 });

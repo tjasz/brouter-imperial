@@ -46,7 +46,8 @@ test("converts profile elevation labels to feet", function () {
 });
 
 test("converts no-go form values between meters and feet", function () {
-  assert.equal(converter.metersToFeet("20"), "66");
+  assert.equal(converter.metersToInputFeet("20"), "66");
+  assert.equal(converter.metersToInputFeet("9.144"), "30");
   assert.equal(converter.feetToMeters("66"), "20.1168");
   assert.equal(converter.feetToMeters("-"), null);
 });

@@ -228,7 +228,7 @@
 
     if (!previous) {
       const metricValue = input.value;
-      const renderedValue = converter.metersToFeet(metricValue);
+      const renderedValue = converter.metersToInputFeet(metricValue);
 
       if (renderedValue !== null) {
         input.value = renderedValue;
@@ -289,7 +289,7 @@
 
       input.value = metricValue;
       queueMicrotask(function () {
-        const renderedValue = converter.metersToFeet(metricValue);
+        const renderedValue = converter.metersToInputFeet(metricValue);
 
         if (renderedValue !== null) {
           input.value = renderedValue;
