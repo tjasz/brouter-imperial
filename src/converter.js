@@ -51,6 +51,20 @@
     );
   }
 
+  function metersToMiles(value) {
+    const meters = parseNumber(value);
+
+    if (meters === null) {
+      return null;
+    }
+
+    return formatDecimal(
+      meters * MILES_PER_KILOMETER / 1000,
+      2,
+      decimalSeparator(value)
+    );
+  }
+
   function metersToFeet(value) {
     const trimmed = value.trim();
     const groupedInteger = /^[+-]?\d{1,3}(?:[.,\s]\d{3})+$/.test(trimmed);
@@ -110,6 +124,7 @@
     kilometerTitleToMiles,
     kilometerTextToMiles,
     meterTextToFeet,
+    metersToMiles,
     metersToFeet
   };
 });

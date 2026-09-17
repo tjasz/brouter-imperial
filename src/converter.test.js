@@ -10,6 +10,13 @@ test("converts displayed kilometers to miles at the same precision", function ()
   assert.equal(converter.kilometersToMiles("0"), "0");
 });
 
+test("converts Data view distances from meters to miles", function () {
+  assert.equal(converter.metersToMiles("89"), "0.06");
+  assert.equal(converter.metersToMiles("1000"), "0.62");
+  assert.equal(converter.metersToMiles("1000,5"), "0,62");
+  assert.equal(converter.metersToMiles("-"), null);
+});
+
 test("converts the precise distance title to miles", function () {
   assert.equal(converter.kilometerTitleToMiles("6.323 km"), "3.929 mi");
   assert.equal(converter.kilometerTitleToMiles("not available"), null);

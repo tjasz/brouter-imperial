@@ -3,6 +3,7 @@
 
   const converter = globalThis.BRouterImperial;
   const states = new Map();
+  const elementStates = new WeakMap();
   let conversionScheduled = false;
 
   const fields = [
@@ -99,6 +100,84 @@
     }
   }
 
+  function convertBareElementText(element, convert) {
+    const previous = elementStates.get(element);
+    const currentText = element.textContent.trim();
+
+    if (!previous || currentText !== previous.renderedText) {
+      const convertedText = convert(currentText);
+      const renderedText = convertedText === null ? currentText : convertedText;
+
+      if (renderedText !== currentText) {
+        element.textContent = renderedText;
+      }
+
+      elementStates.set(element, { renderedText });
+    }
+  }
+
+  function dataColumnIndex(headings, names) {
+    return headings.findIndex(function (heading) {
+      return names.includes(heading.textContent.trim().toLowerCase());
+    });
+  }
+
+  function convertData() {
+    document.querySelectorAll("#tab_data table").forEach(function (table) {
+      const headings = Array.from(table.querySelectorAll("thead th"));
+      const elevationIndex = dataColumnIndex(headings, [
+        "elev.",
+        "elev. (ft)",
+        "elevation"
+      ]);
+      const distanceIndex = dataColumnIndex(headings, [
+        "dist.",
+        "dist. (mi)",
+        "distance"
+      ]);
+
+      table.querySelectorAll("tbody tr").forEach(function (row) {
+        const cells = row.querySelectorAll("td");
+
+        if (elevationIndex >= 0 && cells[elevationIndex]) {
+          convertBareElementText(
+            cells[elevationIndex],
+            converter.metersToFeet
+          );
+        }
+
+        if (distanceIndex >= 0 && cells[distanceIndex]) {
+          convertBareElementText(
+            cells[distanceIndex],
+            converter.metersToMiles
+          );
+        }
+      });
+
+      if (
+        elevationIndex >= 0 &&
+        headings[elevationIndex].textContent !== "elev. (ft)"
+      ) {
+        headings[elevationIndex].textContent = "elev. (ft)";
+      }
+
+      if (
+        distanceIndex >= 0 &&
+        headings[distanceIndex].textContent !== "dist. (mi)"
+      ) {
+        headings[distanceIndex].textContent = "dist. (mi)";
+      }
+    });
+  }
+
+  function convertAnalysis() {
+    document
+      .querySelectorAll("#tab_analysis .track-analysis-distance")
+      .forEach(function (element) {
+        convertElementText(element, converter.kilometerTextToMiles);
+      });
+  }
+
   function convertProfile() {
     document
       .querySelectorAll("#elevation-chart .x.axis .tick text")
@@ -131,6 +210,8 @@
   function convertStats() {
     conversionScheduled = false;
     fields.forEach(convertField);
+    convertData();
+    convertAnalysis();
     convertProfile();
   }
 

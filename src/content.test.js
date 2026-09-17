@@ -16,13 +16,43 @@ function textElement(text) {
   };
 }
 
-test("converts elevation profile axes and hover values after redraws", function () {
+test("converts Data, Analysis, and elevation profile values after redraws", function () {
   const xAxis = textElement("10.00 km");
   const yAxis = textElement("400 m");
   const horizontalLine = textElement("300 m");
   const hoverDistance = textElement(" 6.3 km");
   const hoverElevation = textElement(" 405 m");
   const hoverSegment = textElement(" 1.0 km");
+  const dataHeadings = [
+    textElement("Longitude"),
+    textElement("elev."),
+    textElement("dist.")
+  ];
+  const dataCells = [
+    textElement("8468340"),
+    textElement("101"),
+    textElement("89")
+  ];
+  const dataTable = {
+    querySelectorAll(selector) {
+      if (selector === "thead th") {
+        return dataHeadings;
+      }
+
+      if (selector === "tbody tr") {
+        return [
+          {
+            querySelectorAll() {
+              return dataCells;
+            }
+          }
+        ];
+      }
+
+      return [];
+    }
+  };
+  const analysisDistance = textElement("10.00 km");
   const hoverValues = {
     "heightgraph.distance": hoverDistance,
     "heightgraph.height": hoverElevation,
@@ -44,6 +74,14 @@ test("converts elevation profile axes and hover values after redraws", function 
         : null;
     },
     querySelectorAll(selector) {
+      if (selector === "#tab_data table") {
+        return [dataTable];
+      }
+
+      if (selector === "#tab_analysis .track-analysis-distance") {
+        return [analysisDistance];
+      }
+
       if (selector === "#elevation-chart .x.axis .tick text") {
         return [xAxis];
       }
@@ -73,6 +111,11 @@ test("converts elevation profile axes and hover values after redraws", function 
 
   vm.runInNewContext(source, context);
 
+  assert.equal(dataHeadings[1].textContent, "elev. (ft)");
+  assert.equal(dataHeadings[2].textContent, "dist. (mi)");
+  assert.equal(dataCells[1].textContent, "331");
+  assert.equal(dataCells[2].textContent, "0.06");
+  assert.equal(analysisDistance.textContent, "6.21 mi");
   assert.equal(xAxis.textContent, "6.21 mi");
   assert.equal(yAxis.textContent, "1,312 ft");
   assert.equal(horizontalLine.textContent, "984 ft");
@@ -82,8 +125,19 @@ test("converts elevation profile axes and hover values after redraws", function 
 
   xAxis.textContent = "5.00 km";
   hoverElevation.textContent = " 500 m";
+  dataCells[1].textContent = "200";
+  dataCells[2].textContent = "1000";
+  analysisDistance.textContent = "5.00 km";
   mutationCallback();
 
+  assert.equal(dataCells[1].textContent, "656");
+  assert.equal(dataCells[2].textContent, "0.62");
+  assert.equal(analysisDistance.textContent, "3.11 mi");
   assert.equal(xAxis.textContent, "3.11 mi");
   assert.equal(hoverElevation.textContent, " 1,640 ft");
+
+  mutationCallback();
+
+  assert.equal(dataCells[1].textContent, "656");
+  assert.equal(dataCells[2].textContent, "0.62");
 });
