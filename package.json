@@ -1,0 +1,11 @@
+{
+  "name": "brouter-imperial",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "package": "node scripts/build.mjs --package",
+    "test": "node --test",
+    "verify": "npm test && npm run package"
+  }
+}
