@@ -215,6 +215,17 @@
     return result === value ? null : result;
   }
 
+  function metricUnitsToImperial(value) {
+    const result = value
+      .replace(
+        /(\d+(?:[.,]\d+)?)(\s*)(?:km|км|公里|کیلومتر)/gi,
+        "$1$2mi"
+      )
+      .replace(/(\d+(?:[.,]\d+)?)(\s*)m\b/gi, "$1$2ft");
+
+    return result === value ? null : result;
+  }
+
   return {
     costPerKilometerToCostPerMile,
     embeddedKilometersToMiles,
@@ -225,6 +236,7 @@
     kilometerTextToMiles,
     kilometerUnitToMiles,
     meterTextToFeet,
+    metricUnitsToImperial,
     metersToMiles,
     metersToFeet,
     metersToInputFeet,

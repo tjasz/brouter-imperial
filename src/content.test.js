@@ -86,7 +86,9 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   const analysisSpeed = textElement("50 km/h");
   const meanEnergy = textElement("2.50");
   const energyLabel = textElement("Energy per 100 km");
-  const trackName = { value: "Berlin - Potsdam (6.2km)" };
+  const trackName = {
+    value: "Berlin - Potsdam (6.2km), elev. gain 328 m"
+  };
   const hoverValues = {
     "heightgraph.distance": hoverDistance,
     "heightgraph.height": hoverElevation,
@@ -187,7 +189,10 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   assert.equal(hoverSegment.textContent, " 0.6 mi");
   assert.equal(meanEnergy.textContent, "4.02");
   assert.equal(energyLabel.textContent, "Energy per 100 mi");
-  assert.equal(trackName.value, "Berlin - Potsdam (6.2mi)");
+  assert.equal(
+    trackName.value,
+    "Berlin - Potsdam (6.2mi), elev. gain 328 ft"
+  );
 
   xAxis.textContent = "5.00 km";
   hoverElevation.textContent = " 500 m";
@@ -335,8 +340,71 @@ test("converts an asynchronously generated export name after the modal opens", f
   vm.runInNewContext(source, context);
   modalShown = true;
   mutationCallback();
-  trackName.value = "Seattle (6.4km)";
+  trackName.value = "Seattle (6.4km), elev. gain 100 m";
   pollingCallback();
 
-  assert.equal(trackName.value, "Seattle (6.4mi)");
+  assert.equal(trackName.value, "Seattle (6.4mi), elev. gain 100 ft");
+});
+
+test("polls asynchronously generated names while BikeRouter's export dialog is open", function () {
+  let dialogOpen = false;
+  let mutationCallback;
+  let pollingCallback;
+  const trackName = { value: "" };
+  const document = {
+    documentElement: {},
+    addEventListener() {},
+    getElementById(id) {
+      if (id === "trackname") {
+        return trackName;
+      }
+
+      if (id === "export-dialog") {
+        return {
+          hasAttribute(attribute) {
+            return attribute === "open" && dialogOpen;
+          }
+        };
+      }
+
+      return null;
+    },
+    querySelector() {
+      return null;
+    },
+    querySelectorAll() {
+      return [];
+    }
+  };
+  const context = {
+    BRouterImperial: converter,
+    document,
+    MutationObserver: class {
+      constructor(callback) {
+        mutationCallback = callback;
+      }
+
+      observe() {}
+    },
+    queueMicrotask(callback) {
+      callback();
+    },
+    setTimeout(callback) {
+      pollingCallback = callback;
+    }
+  };
+  const source = ["common-client.js", "bikerouter-client.js"]
+    .map((file) => fs.readFileSync(path.join(__dirname, file), "utf8"))
+    .join("\n");
+
+  vm.runInNewContext(source, context);
+  dialogOpen = true;
+  mutationCallback();
+  trackName.value = "Millcreek - 0.7 mi, elev. gain 26 m";
+  pollingCallback();
+
+  assert.equal(
+    trackName.value,
+    "Millcreek - 0.7 mi, elev. gain 26 ft"
+  );
 });

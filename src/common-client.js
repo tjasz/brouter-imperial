@@ -311,17 +311,25 @@
       return;
     }
 
-    const converted = converter.kilometerUnitToMiles(trackName.value);
+    const converted = converter.metricUnitsToImperial(trackName.value);
 
     if (converted !== null) {
       trackName.value = converted;
     }
   }
 
-  function pollExportName() {
-    const modal = document.getElementById("export");
+  function isExportOpen() {
+    const classicModal = document.getElementById("export");
+    const dialog = document.getElementById("export-dialog");
 
-    if (!modal?.classList.contains("show")) {
+    return Boolean(
+      classicModal?.classList.contains("show") ||
+      dialog?.hasAttribute("open")
+    );
+  }
+
+  function pollExportName() {
+    if (!isExportOpen()) {
       exportPolling = false;
       return;
     }
@@ -331,9 +339,7 @@
   }
 
   function startExportPolling() {
-    const modal = document.getElementById("export");
-
-    if (!exportPolling && modal?.classList.contains("show")) {
+    if (!exportPolling && isExportOpen()) {
       exportPolling = true;
       pollExportName();
     }
@@ -397,7 +403,7 @@
     const observer = new MutationObserver(scheduleConversion);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class", "title"],
+      attributeFilter: ["class", "open", "title"],
       childList: true,
       characterData: true,
       subtree: true

@@ -83,4 +83,10 @@ test("converts embedded kilometer distances and export-name units", function () 
     converter.kilometerUnitToMiles("起點 ->終點(6.2公里)"),
     "起點 ->終點(6.2mi)"
   );
+  assert.equal(
+    converter.metricUnitsToImperial(
+      "Millcreek - 0.7 km, elev. gain 26 m"
+    ),
+    "Millcreek - 0.7 mi, elev. gain 26 ft"
+  );
 });
