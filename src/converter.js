@@ -187,6 +187,29 @@
     return `${match[1]}${milesPerHour} mph${match[3]}`;
   }
 
+  function embeddedKilometersPerHourToMilesPerHour(value) {
+    let converted = false;
+    const result = value.replace(
+      /([+-]?\d+(?:[.,]\d+)?)\s*km\/h/gi,
+      function (match, speed) {
+        const kilometersPerHour = parseNumber(speed);
+
+        if (kilometersPerHour === null) {
+          return match;
+        }
+
+        converted = true;
+        return `${formatDecimal(
+          kilometersPerHour * MILES_PER_KILOMETER,
+          decimalPlaces(speed),
+          decimalSeparator(speed)
+        )} mph`;
+      }
+    );
+
+    return converted ? result : null;
+  }
+
   function embeddedKilometersToMiles(value) {
     let converted = false;
     const result = value.replace(
@@ -228,6 +251,7 @@
 
   return {
     costPerKilometerToCostPerMile,
+    embeddedKilometersPerHourToMilesPerHour,
     embeddedKilometersToMiles,
     feetToMeters,
     kilometersPerHourTextToMilesPerHour,

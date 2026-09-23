@@ -78,11 +78,23 @@
       });
   }
 
+  function convertElevationLegend() {
+    document
+      .querySelectorAll("#elevation-chart .elevation-legend span")
+      .forEach(function (element) {
+        client.convertElementText(
+          element,
+          converter.embeddedKilometersPerHourToMilesPerHour
+        );
+      });
+  }
+
   client.install({
     convertPage() {
       convertSidebarStats();
       convertWaypointStats();
       convertElevationProfile();
+      convertElevationLegend();
     }
   });
 })();

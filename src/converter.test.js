@@ -68,6 +68,14 @@ test("converts analysis speeds to miles per hour", function () {
     "7.8 mph"
   );
   assert.equal(converter.kilometersPerHourTextToMilesPerHour("31 mph"), null);
+  assert.equal(
+    converter.embeddedKilometersPerHourToMilesPerHour(">= 100 km/h"),
+    ">= 62 mph"
+  );
+  assert.equal(
+    converter.embeddedKilometersPerHourToMilesPerHour("Unknown"),
+    null
+  );
 });
 
 test("converts embedded kilometer distances and export-name units", function () {

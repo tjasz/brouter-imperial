@@ -51,6 +51,8 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
   const analysisSpeed = textElement("40 km/h");
   const xAxis = textElement("1.20 km");
   const yAxis = textElement("1335 m");
+  const maximumSpeed = textElement(">= 100 km/h");
+  const unknownSpeed = textElement("Unknown");
 
   [
     [sidebarDistance, sidebarDistanceUnit],
@@ -79,6 +81,10 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
     [
       '#elevation-chart svg[aria-label="Elevation Profile"] text',
       [xAxis, yAxis]
+    ],
+    [
+      "#elevation-chart .elevation-legend span",
+      [maximumSpeed, unknownSpeed]
     ],
     ["#tab_analysis .track-analysis-distance", [analysisDistance]],
     ["#tab_analysis .track-analysis-title", [analysisSpeed]]
@@ -135,6 +141,8 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
   assert.equal(analysisSpeed.textContent, "25 mph");
   assert.equal(xAxis.textContent, "0.75 mi");
   assert.equal(yAxis.textContent, "4,380 ft");
+  assert.equal(maximumSpeed.textContent, ">= 62 mph");
+  assert.equal(unknownSpeed.textContent, "Unknown");
 
   sidebarDistance.textContent = "10.0";
   maximumElevation.textContent = "1500";
