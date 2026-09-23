@@ -9,7 +9,9 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const buildScript = path.join(root, "scripts", "build.mjs");
 const packagedFiles = [
-  "content.js",
+  "bikerouter-client.js",
+  "brouter-client.js",
+  "common-client.js",
   "converter.js",
   "icon.png",
   "imperial-markers.js",
@@ -69,6 +71,14 @@ test("builds valid, deterministic Chromium and Firefox packages", async function
   );
   assert.equal(chromiumManifest.content_scripts[0].world, "MAIN");
   assert.equal(chromiumManifest.content_scripts[0].run_at, "document_start");
+  assert.deepEqual(
+    chromiumManifest.content_scripts[1].js,
+    ["converter.js", "common-client.js", "brouter-client.js"]
+  );
+  assert.deepEqual(
+    chromiumManifest.content_scripts[3].js,
+    ["converter.js", "common-client.js", "bikerouter-client.js"]
+  );
   assert.equal(chromiumManifest.minimum_chrome_version, "111");
   assert.equal(chromiumManifest.browser_specific_settings, undefined);
   assert.equal(firefoxManifest.minimum_chrome_version, undefined);

@@ -1,7 +1,9 @@
 # brouter-imperial
 
-A Firefox and Chromium extension that changes the route statistics on
-[brouter.de/brouter-web](https://brouter.de/brouter-web) from metric to imperial units:
+A Firefox and Chromium extension that changes route statistics on
+[brouter.de/brouter-web](https://brouter.de/brouter-web),
+[bikerouter.de](https://bikerouter.de), and
+[brouter.m11n.de](https://brouter.m11n.de) from metric to imperial units:
 
 - Route distance: kilometers to miles
 - Route distance markers: every 5 miles instead of every 5 kilometers
@@ -53,7 +55,7 @@ Firefox for Android 142 or newer.
 
 Temporary Firefox extensions are removed when Firefox closes.
 
-Reload any already-open brouter.de tabs after installing the extension.
+Reload any already-open supported routing tabs after installing the extension.
 
 ## Test
 

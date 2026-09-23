@@ -1,12 +1,13 @@
-(function () {
+(function (root) {
   "use strict";
 
-  const converter = globalThis.BRouterImperial;
+  const converter = root.BRouterImperial;
   const states = new Map();
   const elementStates = new WeakMap();
   const inputStates = new WeakMap();
   let conversionScheduled = false;
   let exportPolling = false;
+  let convertPage = function () {};
 
   const fields = [
     {
@@ -378,6 +379,7 @@
     convertCirclePopup();
     convertExportName();
     startExportPolling();
+    convertPage();
   }
 
   function scheduleConversion() {
@@ -389,27 +391,37 @@
     queueMicrotask(convertStats);
   }
 
-  const observer = new MutationObserver(scheduleConversion);
-  observer.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["class", "title"],
-    childList: true,
-    characterData: true,
-    subtree: true
-  });
+  function install(options = {}) {
+    convertPage = options.convertPage || convertPage;
 
-  ["click", "pointerup", "touchend"].forEach(function (eventName) {
-    document.addEventListener(eventName, function () {
-      scheduleConversion();
-    }, {
-      capture: true,
-      passive: true
+    const observer = new MutationObserver(scheduleConversion);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "title"],
+      childList: true,
+      characterData: true,
+      subtree: true
     });
-  });
 
-  ["input", "change"].forEach(function (eventName) {
-    document.addEventListener(eventName, scheduleConversion, true);
-  });
+    ["click", "pointerup", "touchend"].forEach(function (eventName) {
+      document.addEventListener(eventName, function () {
+        scheduleConversion();
+      }, {
+        capture: true,
+        passive: true
+      });
+    });
 
-  scheduleConversion();
-})();
+    ["input", "change"].forEach(function (eventName) {
+      document.addEventListener(eventName, scheduleConversion, true);
+    });
+
+    scheduleConversion();
+  }
+
+  root.BRouterImperialClient = {
+    convertBareElementText,
+    convertElementText,
+    install
+  };
+})(globalThis);

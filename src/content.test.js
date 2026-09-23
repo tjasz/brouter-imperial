@@ -160,7 +160,9 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
       callback();
     }
   };
-  const source = fs.readFileSync(path.join(__dirname, "content.js"), "utf8");
+  const source = ["common-client.js", "brouter-client.js"]
+    .map((file) => fs.readFileSync(path.join(__dirname, file), "utf8"))
+    .join("\n");
 
   vm.runInNewContext(source, context);
 
@@ -261,7 +263,9 @@ test("displays no-go inputs and circle popups in imperial units", function () {
     },
     setTimeout() {}
   };
-  const source = fs.readFileSync(path.join(__dirname, "content.js"), "utf8");
+  const source = ["common-client.js", "brouter-client.js"]
+    .map((file) => fs.readFileSync(path.join(__dirname, file), "utf8"))
+    .join("\n");
 
   vm.runInNewContext(source, context);
   queued.shift()();
@@ -324,7 +328,9 @@ test("converts an asynchronously generated export name after the modal opens", f
       pollingCallback = callback;
     }
   };
-  const source = fs.readFileSync(path.join(__dirname, "content.js"), "utf8");
+  const source = ["common-client.js", "brouter-client.js"]
+    .map((file) => fs.readFileSync(path.join(__dirname, file), "utf8"))
+    .join("\n");
 
   vm.runInNewContext(source, context);
   modalShown = true;

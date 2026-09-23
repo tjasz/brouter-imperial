@@ -7,7 +7,9 @@ const sourceDirectory = path.join(root, "src");
 const outputDirectory = path.join(root, "dist");
 const artifactDirectory = path.join(root, "artifacts");
 const runtimeFiles = [
-  "content.js",
+  "bikerouter-client.js",
+  "brouter-client.js",
+  "common-client.js",
   "converter.js",
   "icon.png",
   "imperial-markers.js"
