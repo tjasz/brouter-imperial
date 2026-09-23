@@ -51,6 +51,10 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
   const analysisSpeed = textElement("40 km/h");
   const xAxis = textElement("1.20 km");
   const yAxis = textElement("1335 m");
+  const hoverDistance = textElement("0.70 km");
+  const hoverElevation = textElement("1338 m");
+  const hoverGain = textElement("8 m (-0 m)");
+  const hoverMaximumSpeed = textElement("40 km/h");
   const maximumSpeed = textElement(">= 100 km/h");
   const unknownSpeed = textElement("Unknown");
 
@@ -79,8 +83,15 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
     [".waypoint-stats-value-distance", [waypointDistance]],
     [".waypoint-stats-value-ascend", [waypointAscend]],
     [
-      '#elevation-chart svg[aria-label="Elevation Profile"] text',
-      [xAxis, yAxis]
+      "#elevation-chart svg text",
+      [
+        xAxis,
+        yAxis,
+        hoverDistance,
+        hoverElevation,
+        hoverGain,
+        hoverMaximumSpeed
+      ]
     ],
     [
       "#elevation-chart .elevation-legend span",
@@ -141,6 +152,10 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
   assert.equal(analysisSpeed.textContent, "25 mph");
   assert.equal(xAxis.textContent, "0.75 mi");
   assert.equal(yAxis.textContent, "4,380 ft");
+  assert.equal(hoverDistance.textContent, "0.43 mi");
+  assert.equal(hoverElevation.textContent, "4,390 ft");
+  assert.equal(hoverGain.textContent, "26 ft (0 ft)");
+  assert.equal(hoverMaximumSpeed.textContent, "25 mph");
   assert.equal(maximumSpeed.textContent, ">= 62 mph");
   assert.equal(unknownSpeed.textContent, "Unknown");
 

@@ -69,12 +69,17 @@
 
   function convertElevationProfile() {
     document
-      .querySelectorAll(
-        '#elevation-chart svg[aria-label="Elevation Profile"] text'
-      )
+      .querySelectorAll("#elevation-chart svg text")
       .forEach(function (element) {
-        client.convertElementText(element, converter.kilometerTextToMiles);
-        client.convertElementText(element, converter.meterTextToFeet);
+        client.convertElementText(
+          element,
+          converter.embeddedKilometersPerHourToMilesPerHour
+        );
+        client.convertElementText(
+          element,
+          converter.embeddedKilometersToMiles
+        );
+        client.convertElementText(element, converter.embeddedMetersToFeet);
       });
   }
 

@@ -43,6 +43,10 @@ test("converts profile elevation labels to feet", function () {
   assert.equal(converter.meterTextToFeet(" 405 m"), " 1,329 ft");
   assert.equal(converter.meterTextToFeet("-10 m"), "-33 ft");
   assert.equal(converter.meterTextToFeet("405 ft"), null);
+  assert.equal(
+    converter.embeddedMetersToFeet("26 m (-8 m)"),
+    "85 ft (-26 ft)"
+  );
 });
 
 test("converts no-go form values between meters and feet", function () {

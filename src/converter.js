@@ -229,6 +229,25 @@
     return converted ? result : null;
   }
 
+  function embeddedMetersToFeet(value) {
+    let converted = false;
+    const result = value.replace(
+      /([+-]?\d+(?:[.,]\d+)?)\s*m\b/gi,
+      function (match, elevation) {
+        const feet = metersToFeet(elevation);
+
+        if (feet === null) {
+          return match;
+        }
+
+        converted = true;
+        return `${feet} ft`;
+      }
+    );
+
+    return converted ? result : null;
+  }
+
   function kilometerUnitToMiles(value) {
     const result = value.replace(
       /(\d+(?:[.,]\d+)?)(\s*)(?:km|км|公里|کیلومتر)/gi,
@@ -253,6 +272,7 @@
     costPerKilometerToCostPerMile,
     embeddedKilometersPerHourToMilesPerHour,
     embeddedKilometersToMiles,
+    embeddedMetersToFeet,
     feetToMeters,
     kilometersPerHourTextToMilesPerHour,
     kilometersToMiles,
