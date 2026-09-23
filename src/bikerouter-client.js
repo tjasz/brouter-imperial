@@ -7,7 +7,10 @@
   function updateUnit(element, text, title) {
     const unit = element.nextElementSibling;
 
-    if (!unit?.classList.contains("unit")) {
+    if (
+      !unit?.classList.contains("unit") &&
+      !unit?.classList.contains("waypoint-stats-unit")
+    ) {
       return;
     }
 

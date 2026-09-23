@@ -16,13 +16,13 @@ function textElement(text) {
   };
 }
 
-function unitElement(text) {
+function unitElement(text, classes = ["unit"]) {
   return {
     textContent: text,
     title: "",
     classList: {
       contains(className) {
-        return className === "unit";
+        return classes.includes(className);
       }
     }
   };
@@ -38,9 +38,15 @@ test("converts BikeRouter sidebar, waypoint, analysis, and profile values", func
   const plainAscend = textElement("0");
   const plainAscendUnit = unitElement("m \u2197");
   const waypointDistance = textElement("2.5");
-  const waypointDistanceUnit = unitElement("km");
+  const waypointDistanceUnit = unitElement("km", [
+    "waypoint-stats-unit",
+    "waypoint-stats-unit-distance"
+  ]);
   const waypointAscend = textElement("100");
-  const waypointAscendUnit = unitElement("m");
+  const waypointAscendUnit = unitElement("m", [
+    "waypoint-stats-unit",
+    "waypoint-stats-unit-ascend"
+  ]);
   const analysisDistance = textElement("1.23 km");
   const analysisSpeed = textElement("40 km/h");
   const xAxis = textElement("1.20 km");
