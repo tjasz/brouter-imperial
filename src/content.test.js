@@ -16,6 +16,25 @@ function textElement(text) {
   };
 }
 
+function routeDistanceElement(text, title, unit) {
+  return {
+    textContent: text,
+    parentElement: {
+      querySelectorAll(selector) {
+        return selector === "abbr" ? [unit] : [];
+      }
+    },
+    getAttribute(name) {
+      return name === "title" ? title : null;
+    },
+    setAttribute(name, value) {
+      if (name === "title") {
+        title = value;
+      }
+    }
+  };
+}
+
 function sizingHeading(text) {
   let sizing = textElement(text);
   let plainText = "";
@@ -35,6 +54,12 @@ function sizingHeading(text) {
 }
 
 test("converts Data, Analysis, and elevation profile values after redraws", function () {
+  const distanceUnit = { textContent: "km", title: "kilometers" };
+  const routeDistance = routeDistanceElement(
+    "6.3",
+    "6.323 km",
+    distanceUnit
+  );
   const xAxis = textElement("10.00 km");
   const yAxis = textElement("400 m");
   const horizontalLine = textElement("300 m");
@@ -95,6 +120,7 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
     "heightgraph.blockdistance": hoverSegment
   };
   const directElements = {
+    distance: routeDistance,
     meanenergy: meanEnergy,
     trackname: trackName
   };
@@ -168,6 +194,10 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
 
   vm.runInNewContext(source, context);
 
+  assert.equal(routeDistance.textContent, "3.9");
+  assert.equal(routeDistance.getAttribute("title"), "3.929 mi");
+  assert.equal(distanceUnit.textContent, "mi");
+  assert.equal(distanceUnit.title, "miles");
   assert.equal(upperDataHeadings[1].textContent, "elev. (ft)");
   assert.equal(upperDataHeadings[2].textContent, "dist. (mi)");
   assert.equal(lowerDataHeadings[1].textContent, "elev. (ft)");
@@ -202,8 +232,10 @@ test("converts Data, Analysis, and elevation profile values after redraws", func
   analysisDistance.textContent = "5.00 km";
   analysisSpeed.textContent = "80 km/h";
   meanEnergy.textContent = "3.00";
+  routeDistance.textContent = "1";
   mutationCallback();
 
+  assert.equal(routeDistance.textContent, "0.6");
   assert.equal(dataCells[1].textContent, "656");
   assert.equal(dataCells[2].textContent, "0.62");
   assert.equal(dataCells[3].textContent, "80.47");

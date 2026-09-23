@@ -9,10 +9,20 @@
   let exportPolling = false;
   let convertPage = function () {};
 
+  function routeKilometersToMiles(value) {
+    const trimmed = value.trim();
+
+    if (/^[+-]?\d+$/.test(trimmed) && Number(trimmed) !== 0) {
+      return converter.kilometersToMiles(`${trimmed}.0`);
+    }
+
+    return converter.kilometersToMiles(value);
+  }
+
   const fields = [
     {
       id: "distance",
-      convert: converter.kilometersToMiles,
+      convert: routeKilometersToMiles,
       convertTitle: converter.kilometerTitleToMiles,
       unitIndex: 0,
       unitText: "mi",
