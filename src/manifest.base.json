@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "brouter-imperial",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "icons": {
     "128": "icon.png"
   },
@@ -10,7 +10,8 @@
     {
       "matches": [
         "*://brouter.de/*",
-        "*://*.brouter.de/*"
+        "*://*.brouter.de/*",
+        "*://brouter.damsy.net/*"
       ],
       "js": [
         "imperial-markers.js"
@@ -21,7 +22,8 @@
     {
       "matches": [
         "*://brouter.de/*",
-        "*://*.brouter.de/*"
+        "*://*.brouter.de/*",
+        "*://brouter.damsy.net/*"
       ],
       "js": [
         "converter.js",

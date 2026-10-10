@@ -75,6 +75,18 @@ test("builds valid, deterministic Chromium and Firefox packages", async function
     chromiumManifest.content_scripts[1].js,
     ["converter.js", "common-client.js", "brouter-client.js"]
   );
+  assert.equal(
+    chromiumManifest.content_scripts[0].matches.includes(
+      "*://brouter.damsy.net/*"
+    ),
+    true
+  );
+  assert.equal(
+    chromiumManifest.content_scripts[1].matches.includes(
+      "*://brouter.damsy.net/*"
+    ),
+    true
+  );
   assert.deepEqual(
     chromiumManifest.content_scripts[3].js,
     ["converter.js", "common-client.js", "bikerouter-client.js"]
